@@ -34,7 +34,7 @@ IRIS requires a specific folder structure for proper execution. The dataset shou
 
 - **Folder Name:** A four-character identifier, typically matching the **PDB ID** of the RNA receptor if applicable.
 - The following files are required after **rDock** calculations:
-  - `<folder_name>.pdb` (Include this if a PDB structure of the RNA receptor is available. If not, rename the `.mol2` file as `.pdb`.)
+  - `<folder_name>.pdb` (Include this if a PDB structure of the RNA receptor is available. If not, copy the '.mol2' file and rename the copied `.mol2` file as `(folder name).pdb`.)
   - `<folder_name>.mol2`
   - `<folder_name>_lig.sd`
   - `<folder_name>_docking_out_sorted.sd`
