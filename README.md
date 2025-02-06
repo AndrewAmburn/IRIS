@@ -1,46 +1,75 @@
-README.md
+# IRIS: Intelligent RNA Interaction Scorer  
+A machine learning-based tool for improving RNA-ligand docking pose ranking.
 
-# Step 1. Download requirements.txt in a conda-environment (python 3.9 and above).
+## Installation Requirements  
 
-# Install Conda dependencies
+### 1. Setting Up the Environment  
+IRIS requires a Conda environment with Python 3.9 or higher. To install the necessary dependencies, follow these steps:
+
+#### Install Conda Dependencies  
+```bash
 conda install --yes --file ~/IRIS/requirements.txt -c conda-forge
+```
 
-# Pip installs
-pip install spyrmsd==0.8.0 rdkit==2024.3.2 scikit-learn==1.3.2 joblib==1.3.2 pandas 
+#### Install Additional Packages via Pip  
+```bash
+pip install spyrmsd==0.8.0 rdkit==2024.3.2 scikit-learn==1.3.2 joblib==1.3.2 pandas catboost==1.2.7
+```
 
+### 2. Additional Requirements  
+In addition to the dependencies listed in `requirements.txt`, the following software and plugins are required:
 
+- **PyMOL** (A working installation is needed for structure visualization and feature extraction).  
+- **PyMOL Plugins**:
+  - `show_bumps.py`
+  - `get_raw_distances.py`  
 
-# In addition to the requirements in the requirements.txt file, you will need to download a working version of PyMol, as well as the PyMol plugins: show_bumps.py and get_raw_distances.py
+Ensure that these plugins are accessible within your PyMOL installation before proceeding.  
 
-# Step 2. Structuring the data
+---
 
-# IRIS requires a specifc data structure for seamless script execution. The structure should follow this general flow:
-- Folder name is a four character ID, usually corresponding to the same 4 character PDB ID of the RNA receptor if relevant
-- The following files are required and should be available post-rDock calculations:
-    - (folder name).pdb (Note: this file is intended for inclusion if there is a pdb of the corresponding RNA receptor. If no PDB exists of the RNA receptor, please copy the .mol2 and rename the extension as .pdb)
-    - (folder name).mol2
-    - (folder name)_lig.sd
-    - (folder name)_docking_out_sorted.sd
-    - (folder name)_cavity.log
+## Data Organization  
 
-# Step 3. Running the scripts
+IRIS requires a specific folder structure for proper execution. The dataset should be structured as follows:
 
-Note: run all scripts from IRIS/scripts directory
+- **Folder Name:** A four-character identifier, typically matching the **PDB ID** of the RNA receptor if applicable.
+- The following files are required after **rDock** calculations:
+  - `<folder_name>.pdb` (Include this if a PDB structure of the RNA receptor is available. If not, rename the `.mol2` file as `.pdb`.)
+  - `<folder_name>.mol2`
+  - `<folder_name>_lig.sd`
+  - `<folder_name>_docking_out_sorted.sd`
+  - `<folder_name>_cavity.log`  
 
+Ensure that all required files are present before running IRIS.
 
-# Generate features for a single RNA-ligand complex:
-1. get_features.py 
+---
 
-# Usage: python get_features.py <folder_path> <pymol_path> <pymol_plugin_path>"
+## Running IRIS Scripts  
 
-2. IRIS_(docking_method).py 
+### 1. Generate Features for a Single RNA-Ligand Complex  
+Navigate to the `IRIS/scripts` directory and run the following command:  
+```
+python get_features.py <folder_path> <pymol_path> <pymol_plugin_path>
+```
 
-# Valid IRIS re-ranking scripts: IRIS_RL_dock.py, IRIS_RL_dock_solv.py, IRIS_TS_dock.py, IRIS_TS_dock_solv.py 
+### 2. Perform ML-Based Pose Re-Ranking  
+Use the appropriate IRIS script based on the docking method used. Available re-ranking scripts include:
 
-# Usage example: python IRIS_RL_dock.py <folder_path>
+- `IRIS_RL_dock.py`
+- `IRIS_RL_dock_solv.py`
+- `IRIS_TS_dock.py`
+- `IRIS_TS_dock_solv.py`
 
+#### Example Usage:  
+```
+python IRIS_RL_dock.py <folder_path>
+```
 
-#####
+Replace `<folder_path>` with the path to the directory containing the docking results.
 
+---
 
-
+## Notes  
+- Ensure that all required dependencies and plugins are correctly installed before running the scripts.  
+- Run all scripts from the `IRIS/scripts` directory.  
+- If any errors occur, verify that the folder structure and input files match the expected format.  
