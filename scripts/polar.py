@@ -9,7 +9,7 @@ def get_number_of_states(sdf_path):
     """
     Use RDKit to count the number of molecules (states) in the SDF file.
     """
-    suppl = Chem.SDMolSupplier(sdf_path, removeHs=False)
+    suppl = Chem.SDMolSupplier(sdf_path, sanitize=False, removeHs=False)
     num_states = len([mol for mol in suppl if mol is not None])
     print(f"Number of states in {sdf_path}: {num_states}")
     return num_states

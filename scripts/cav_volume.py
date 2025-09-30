@@ -12,20 +12,19 @@ def extract_cavity_volume(log_file_path):
         float: The extracted total volume.
     """
     if not os.path.exists(log_file_path):
-        print(f"Error: {log_file_path} does not exist.")
+        print(f"Warning: {log_file_path} does not exist. Skipping.")
         return None
 
     try:
         with open(log_file_path, 'r') as file:
             for line in file:
-                # Look for the line containing "Total volume"
                 match = re.search(r'Total volume ([0-9]+(?:\.[0-9]+)?) A\^3', line)
                 if match:
                     return float(match.group(1))
     except Exception as e:
         print(f"Error reading {log_file_path}: {e}")
 
-    print(f"No total volume found in {log_file_path}.")
+    print(f"No total volume found in {log_file_path}. Skipping.")
     return None
 
 def update_scores_with_cavity_volume(directory_path):
@@ -35,19 +34,16 @@ def update_scores_with_cavity_volume(directory_path):
     Parameters:
         directory_path (str): Path to the directory containing the descriptors_full.txt and cavity log file.
     """
-    folder_name = os.path.basename(directory_path)
+    folder_name = os.path.basename(os.path.normpath(directory_path))
     log_file_path = os.path.join(directory_path, f"{folder_name}_cavity.log")
     scores_file_path = os.path.join(directory_path, "descriptors_full.txt")
 
-    # Extract the cavity volume
     cavity_volume = extract_cavity_volume(log_file_path)
     if cavity_volume is None:
-        print(f"Skipping update for {directory_path} due to missing cavity volume.")
-        return
+        return  # Skip if cavity volume couldn't be extracted
 
-    # Update the descriptors_full.txt file
     if not os.path.exists(scores_file_path):
-        print(f"Error: {scores_file_path} does not exist.")
+        print(f"Warning: {scores_file_path} does not exist. Skipping.")
         return
 
     try:
@@ -70,15 +66,12 @@ def update_scores_with_cavity_volume(directory_path):
 if __name__ == "__main__":
     import sys
 
-    # Ensure the correct number of arguments are passed
     if len(sys.argv) != 2:
         print("Usage: python cav_volume.py <directory_path>")
         sys.exit(1)
 
-    # Get the directory from the command-line arguments
     directory_path = sys.argv[1]
 
-    # Check if the input is a valid directory
     if os.path.isdir(directory_path):
         update_scores_with_cavity_volume(directory_path)
     else:

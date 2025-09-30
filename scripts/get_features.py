@@ -54,7 +54,6 @@ def main():
         ("sd2sdf.py", [working_directory]),
         ("consolidate_scores.py", [working_directory]),
         ("lig_sd2pdb.py", [working_directory]),
-        ("rmsd.py", [working_directory]),
         ("consolidate_scores_and_rmsd.py", [working_directory]),
         ("generate_descriptors.py", [working_directory, pymol_path, pymol_plugin_path]),
         ("rdkit_full.py", [working_directory]),

@@ -4,6 +4,7 @@ import time
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import numpy as np
+import time
 
 def calculate_min_distances(mol1, mol2=None, atom_pairs=[('N', 'C')]):
     """
@@ -210,11 +211,22 @@ def process_directory(base_dir):
     ]
 
     # Define file paths in the given directory
-    folder_name = os.path.basename(base_dir)
+    folder_name = os.path.basename(os.path.normpath(base_dir))
+
     output_file = os.path.join(base_dir, "distances.txt")
-    ligand_file = os.path.join(base_dir, f"{folder_name}_docking_out_sorted.sdf")
+    # Dynamically find the SDF file ending with out_sorted.sdf
+    ligand_file = None
+    for fname in os.listdir(base_dir):
+        if fname.endswith("out_sorted.sdf"):
+            ligand_file = os.path.join(base_dir, fname)
+            break
+
+    if not ligand_file or not os.path.exists(ligand_file):
+        print(f"No ligand SDF file ending with 'out_sorted.sdf' found in {base_dir}.")
+        return
+
     receptor_file = os.path.join(base_dir, f"{folder_name}.mol2")
-    pdb_file = os.path.join(base_dir, f"{folder_name}.pdb")
+    pdb_file = os.path.join(base_dir, f"{folder_name}_h.pdb")
 
     # Check for existing output
     if os.path.exists(output_file):
@@ -233,13 +245,15 @@ def process_directory(base_dir):
         return
 
     # Load receptor
-    try: 
-        receptor = Chem.MolFromMol2File(receptor_file)
-        if receptor is None:
-            raise ValueError("Failed to load receptor.")
-    except Exception as e:
-        print(f"Receptor could not be processed. Error: {e}")
-        receptor = Chem.MolFromMol2File(receptor_file, removeHs=False, sanitize=False)
+# Attempt receptor loading with and without sanitization
+    receptor = Chem.MolFromMol2File(receptor_file)
+    if receptor is None:
+        print(f"[!] Default sanitization failed for receptor {folder_name}, trying without sanitization...")
+        receptor = Chem.MolFromMol2File(receptor_file, sanitize=False, removeHs=False)
+
+    if receptor is None:
+        print(f"[ERROR] Receptor could not be loaded even after disabling sanitization. Skipping {folder_name}.")
+        return
 
     # Extract metal coordinates
     metal_coords = extract_metal_coordinates(pdb_file) if os.path.exists(pdb_file) else np.array([])
@@ -247,7 +261,8 @@ def process_directory(base_dir):
     # Prepare output file
     with open(output_file, "w") as f_out:
         # Load ligands
-        supplier = Chem.SDMolSupplier(ligand_file)
+        supplier = Chem.SDMolSupplier(ligand_file, sanitize=False, removeHs=False)
+
 
         for i, ligand in enumerate(supplier, start=1):  # Start count from 1
             if ligand is None:
@@ -360,20 +375,31 @@ def combine_after_distances(input_dir):
         print(f"Missing files for combining in {input_dir}. Ensure both descriptors_full.txt and distances.txt exist.")
 
 
+# Entry point for walking through a parent directory
+def wait_for_file(path):
+    """Wait indefinitely until a file appears."""
+    print(f"Waiting for {path} to appear...")
+    while not os.path.exists(path):
+        time.sleep(0.5)
+    return True
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python calculate_distances_and_combine.py <input_directory>")
+        print("Usage: python rdkit_full.py <parent_directory>")
         sys.exit(1)
 
-    input_dir = sys.argv[1]
-    if not os.path.isdir(input_dir):
-        print(f"Error: {input_dir} is not a valid directory.")
+    parent_dir = sys.argv[1]
+    if not os.path.isdir(parent_dir):
+        print(f"Error: {parent_dir} is not a valid directory.")
         sys.exit(1)
 
-    # Step 1: Calculate distances
-    process_directory(input_dir)
+    for subfolder in os.listdir(parent_dir):
+        subfolder_path = os.path.join(parent_dir, subfolder)
+        if os.path.isdir(subfolder_path):
+            print(f"\n📂 Processing: {subfolder_path}")
+            process_directory(subfolder_path)
 
-    # Step 2: Combine distances.txt and descriptors_full.txt
-    combine_after_distances(input_dir)
-
-
+            # Wait for distances.txt before combining
+            distances_file = os.path.join(subfolder_path, "distances.txt")
+            if wait_for_file(distances_file):
+                combine_after_distances(subfolder_path)

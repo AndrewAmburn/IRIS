@@ -83,9 +83,9 @@ def append_3d_descriptors_to_file(descriptors_file, descriptors_data):
 
     keywords = ['PMI1:', 'PMI2:', 'PMI3:', 'NPR2:', 'RadiusOfGyration:', 'InertialShapeFactor:', 
                 'Eccentricity:', 'SpherocityIndex:', 'Asphericity:', 'NPR1:', 'PBF:']
-    
+
     existing_keywords = any(any(keyword in line for keyword in keywords) for line in lines)
-    
+
     if existing_keywords:
         print(f"Skipping append: Descriptor lines already exist in {descriptors_file}")
         return
@@ -113,21 +113,24 @@ def process_3d_append(directory):
         print(f"Files missing in directory {directory}: Skipping...")
 
 def main():
-    # Ensure the correct number of arguments are passed
     if len(sys.argv) != 2:
-        print("Usage: python <script_name> <directory_path>")
+        print("Usage: python <script_name> <parent_directory>")
         sys.exit(1)
 
-    # Get the folder path from command-line arguments
-    folder_path = sys.argv[1]
+    parent_dir = sys.argv[1]
 
-    # Step 1: Calculate 3D descriptors and write them to rdkit_3D_descriptors.txt
-    process_directory(folder_path)
-    print("3D descriptors extraction and file writing complete.")
+    if not os.path.isdir(parent_dir):
+        print(f"Error: {parent_dir} is not a valid directory.")
+        sys.exit(1)
 
-    # Step 2: Append the 3D descriptors to descriptors.txt
-    process_3d_append(folder_path)
-    print("Appended 3D descriptors to descriptors.txt.")
+    for subfolder in os.listdir(parent_dir):
+        subfolder_path = os.path.join(parent_dir, subfolder)
+        if not os.path.isdir(subfolder_path):
+            continue
+
+        print(f"🔍 Processing: {subfolder_path}")
+        process_directory(subfolder_path)
+        process_3d_append(subfolder_path)
 
 if __name__ == "__main__":
     main()

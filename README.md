@@ -35,10 +35,10 @@ IRIS requires a specific folder structure for proper execution. The dataset shou
 - **Folder Name:** A four-character identifier, typically matching the **PDB ID** of the RNA receptor if applicable.
 - The following files are required after **rDock** calculations:
   - `<folder_name>.pdb` (Include this if a PDB structure of the RNA receptor is available. If not, copy the `.mol2` file and rename the copied `.mol2` file as `<folder name>.pdb`.)
-  - `<folder_name>.mol2`
-  - `<folder_name>_lig.sd`
-  - `<folder_name>_docking_out_sorted.sd`
-  - `<folder_name>_cavity.log`  
+  - `<folder_name>.mol2` - receptor file without ligand bound
+  - `<folder_name>_lig.sd` - ligand file
+  - `<folder_name>_docking_out_sorted.sd` rDock docking output
+  - `<folder_name>_cavity.log` - rDock cavity file 
 
 Ensure that all required files are present before running IRIS.
 
@@ -52,20 +52,17 @@ Navigate to the `IRIS/scripts` directory and run the following command:
 python get_features.py <folder_path> <pymol_path> <pymol_plugin_path>
 ```
 
-### 2. Perform ML-Based Pose Re-Ranking  
-Use the appropriate IRIS script based on the docking method used. Available re-ranking scripts include:
+### 2. Perform ML-Based Pose Re-Ranking via the following script:
 
-- `IRIS_RL_dock.py`
-- `IRIS_RL_dock_solv.py`
-- `IRIS_TS_dock.py`
-- `IRIS_TS_dock_solv.py`
+- `IRIS.py`
+
 
 #### Example Usage:  
 ```
-python IRIS_RL_dock.py <folder_path>
+python IRIS.py <folder_path>
 ```
 
-Replace `<folder_path>` with the path to the directory containing the docking results.
+Replace `<folder_path>` with the path to the directory containing the docking results and previously mentioned files.
 
 ---
 
