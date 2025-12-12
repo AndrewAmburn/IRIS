@@ -1,0 +1,39 @@
+name: iris_env
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - scikit-learn=1.3.2
+  - rdkit=2024.03.2
+  - matplotlib
+  - seaborn
+  - joblib
+  - shap
+  - lightgbm
+  - spyrmsd
+  - tqdm
+  - biopython
+  - plotly
+  - numba
+  - scipy
+  - h5py
+  - pycairo
+  - pygobject
+  - protobuf
+  - requests
+  - werkzeug
+  - termcolor
+  - six
+  - threadpoolctl
+  - openbabel=3.1.1
+
+  - pip
+  - pip:
+      - catboost==1.2.7
+      - xgboost==2.1.3
+      - deap==1.4.2
+      - tpot==0.12.2

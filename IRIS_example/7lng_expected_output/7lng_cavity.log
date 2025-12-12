@@ -1,0 +1,74 @@
+***********************************************
+The rDock program is licensed under GNU-LGPLv3.0. http://rdock.sourceforge.net/
+Executable:	rbcavity ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbcavity.cxx#3 $)
+Library:	libRbt.so/2013.1/901 2013/11/27
+RBT_ROOT:	/software/dev_tools/swtree/cs400_centos7.2_pe2016-08/rdock/2013.1/centos7.2_conda/build
+RBT_HOME:	/home/jta30
+Current dir:	/home/jta30/NA_complexes/7lng
+Date:		Tue Dec 17 00:54:00 2024
+***********************************************
+
+Command line arguments:
+-r 7lng.prm
+-was
+RbtMOL2FileSource: INFO Attempting to identify element by 1st 2 chars of FFType string: O
+RbtMOL2FileSource: INFO Atomic number = 8
+RbtMOL2FileSource: INFO Removing orphan hydrogen B:A_5:H06
+RbtMOL2FileSource: INFO Removing orphan hydrogen B:A_5:H10
+RbtMOL2FileSource: WARNING Undefined Tripos type for A:C_13:O3'
+
+MAPPER
+CLASS	RbtLigandSiteMapper
+ENABLED	TRUE
+GRIDSTEP	0.5
+MAX_CAVITIES	1
+MIN_VOLUME	100
+NAME	MAPPER
+RADIUS	4.0
+REF_MOL	7lng_lig.sd
+SMALL_SPHERE	1.0
+TRACE	0
+VOL_INCR	0.0
+
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+N11 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C12 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+N14 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C15 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C16 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C17 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+N19 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C20 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+N21 makes a bond with an unknown bond order
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+N11 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C12 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+N14 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C15 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C16 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C17 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+N19 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C20 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+N21 makes too many bonds
+
+DOCKING SITE
+Total volume 877.75 A^3
+Cavity #1	Size=7022 points; Vol=877.75 A^3; Min=(7.5,3.5,-1); Max=(23,18.5,11); Center=(15.03,12.0012,4.70735); Extent=(15.5,15,12)
+
+Cav = 7022; total = 7022
