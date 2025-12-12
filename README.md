@@ -6,9 +6,10 @@ A machine learning-based tool for improving RNA-ligand docking pose ranking.
 ### 1. Setting Up the Environment  
 IRIS requires a Conda environment with Python 3.9 or higher. To install the necessary dependencies, follow these steps:
 
-#### Install Conda Dependencies  
+#### Create the Conda Environment  
 ```bash
-conda install --yes --file ~/IRIS/requirements.txt -c conda-forge
+conda env create -f environment.yml
+conda activate iris_env
 ```
 
 #### Install Additional Packages via Pip  
@@ -17,9 +18,9 @@ pip install spyrmsd==0.8.0 rdkit==2024.3.2 scikit-learn==1.3.2 joblib==1.3.2 pan
 ```
 
 ### 2. Additional Requirements  
-In addition to the dependencies listed in `requirements.txt`, the following software and plugins are required:
+In addition, the following software and plugins are required:
 
-- **PyMOL** (A working installation is needed for structure visualization and feature extraction).  
+- **PyMOL** (A working local installation is needed for structure visualization and feature extraction).  
 - **PyMOL Plugins**:
   - `show_bumps.py`
   - `get_raw_distances.py`  
@@ -52,17 +53,12 @@ Navigate to the `IRIS/scripts` directory and run the following command:
 python get_features.py <folder_path> <pymol_path> <pymol_plugin_path>
 ```
 
+
 ### 2. Perform ML-Based Pose Re-Ranking via the following script:
 
-- `IRIS.py`
-
-
-#### Example Usage:  
 ```
 python IRIS.py <folder_path>
 ```
-
-Replace `<folder_path>` with the path to the directory containing the docking results and previously mentioned files.
 
 ---
 

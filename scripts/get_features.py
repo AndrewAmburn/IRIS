@@ -58,7 +58,8 @@ def main():
         ("generate_descriptors.py", [working_directory, pymol_path, pymol_plugin_path]),
         ("rdkit_full.py", [working_directory]),
         ("cav_volume.py", [working_directory]),
-        ("distances.py", [working_directory])
+        ("distances.py", [working_directory]),
+        ("receptor_descriptors.py", [working_directory])
     ]
 
     # Run each script in sequence
@@ -70,3 +71,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

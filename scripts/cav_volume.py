@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 def extract_cavity_volume(log_file_path):
     """
@@ -9,7 +10,7 @@ def extract_cavity_volume(log_file_path):
         log_file_path (str): Path to the cavity log file.
 
     Returns:
-        float: The extracted total volume.
+        float or None: The extracted total volume, or None if not found.
     """
     if not os.path.exists(log_file_path):
         print(f"Warning: {log_file_path} does not exist. Skipping.")
@@ -27,24 +28,40 @@ def extract_cavity_volume(log_file_path):
     print(f"No total volume found in {log_file_path}. Skipping.")
     return None
 
+def find_cavity_log(directory_path):
+    """
+    Look for a *_cavity.log file in the given directory.
+
+    Returns:
+        str or None: Path to the first *_cavity.log found, or None if none exist.
+    """
+    for fname in os.listdir(directory_path):
+        if fname.endswith("_cavity.log"):
+            return os.path.join(directory_path, fname)
+    print(f"Warning: No *_cavity.log file found in {directory_path}. Skipping cavity volume.")
+    return None
+
 def update_scores_with_cavity_volume(directory_path):
     """
     Update the descriptors_full.txt file with the cavity volume from the log file.
 
     Parameters:
-        directory_path (str): Path to the directory containing the descriptors_full.txt and cavity log file.
+        directory_path (str): Path to the directory containing descriptors_full.txt
+                              and a *_cavity.log file.
     """
-    folder_name = os.path.basename(os.path.normpath(directory_path))
-    log_file_path = os.path.join(directory_path, f"{folder_name}_cavity.log")
     scores_file_path = os.path.join(directory_path, "descriptors_full.txt")
-
-    cavity_volume = extract_cavity_volume(log_file_path)
-    if cavity_volume is None:
-        return  # Skip if cavity volume couldn't be extracted
 
     if not os.path.exists(scores_file_path):
         print(f"Warning: {scores_file_path} does not exist. Skipping.")
         return
+
+    log_file_path = find_cavity_log(directory_path)
+    if log_file_path is None:
+        return  # no cavity log; nothing to add
+
+    cavity_volume = extract_cavity_volume(log_file_path)
+    if cavity_volume is None:
+        return  # could not extract volume
 
     try:
         with open(scores_file_path, 'r') as scores_file:
@@ -63,9 +80,7 @@ def update_scores_with_cavity_volume(directory_path):
     except Exception as e:
         print(f"Error updating {scores_file_path}: {e}")
 
-if __name__ == "__main__":
-    import sys
-
+def main():
     if len(sys.argv) != 2:
         print("Usage: python cav_volume.py <directory_path>")
         sys.exit(1)
@@ -77,3 +92,6 @@ if __name__ == "__main__":
     else:
         print(f"Error: {directory_path} is not a valid directory.")
         sys.exit(1)
+
+if __name__ == "__main__":
+    main()

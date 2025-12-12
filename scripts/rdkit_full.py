@@ -6,15 +6,17 @@ import time
 from rdkit import Chem
 from rdkit.Chem import Descriptors
 
-# Function to calculate descriptors for a single molecule
 def getMolDescriptors(mol, missingVal=None):
+    """
+    Compute all RDKit 2D descriptors for a molecule.
+    """
     res = {}
     try:
         Chem.SanitizeMol(mol)
     except Exception as e:
         print(f"[WARN] Molecule sanitation failed: {e}")
     try:
-        Chem.GetSymmSSSR(mol)  # Initialize ring info
+        Chem.GetSymmSSSR(mol)  # initialize ring info if possible
     except Exception as e:
         print(f"[WARN] Could not initialize ring info: {e}")
     for nm, fn in Descriptors._descList:
@@ -26,8 +28,10 @@ def getMolDescriptors(mol, missingVal=None):
         res[nm] = val
     return res
 
-# Load SDF file with retry logic
 def load_sdf_with_retry(sdf_file, retries=3, delay=2):
+    """
+    Try to load an SDF file a few times in case of transient IO issues.
+    """
     for attempt in range(retries):
         try:
             suppl = Chem.SDMolSupplier(sdf_file, sanitize=False, removeHs=False)
@@ -36,11 +40,14 @@ def load_sdf_with_retry(sdf_file, retries=3, delay=2):
         except Exception as e:
             print(f"Attempt {attempt + 1} failed to load {sdf_file}: {e}")
             time.sleep(delay)
-    print(f"Failed to load SDF file after {retries} attempts: {sdf_file}")
+    print(f"[ERROR] Failed to load SDF file after {retries} attempts: {sdf_file}")
     return None
 
-# Combine descriptors from descriptors.txt and rdkit_full.txt
 def combine_descriptors(descriptors_file, rdkit_file, output_file):
+    """
+    Merge descriptors.txt (interaction / custom descriptors)
+    and *_rdkit_full.txt (RDKit 2D descriptors) into descriptors_full.txt.
+    """
     combined_data = []
 
     with open(descriptors_file, 'r') as f:
@@ -52,6 +59,7 @@ def combine_descriptors(descriptors_file, rdkit_file, output_file):
     ligand_number = None
     rdkit_dict = {}
 
+    # Build a mapping: "Ligand X Scores:" -> list of RDKit lines
     for line in rdkit_data:
         line = line.strip()
         if line.startswith("Ligand ") and "Scores" in line:
@@ -60,6 +68,7 @@ def combine_descriptors(descriptors_file, rdkit_file, output_file):
         elif ligand_number:
             rdkit_dict[ligand_number].append(f"  {line}")
 
+    # Interleave base descriptors with RDKit descriptors
     for line in descriptors_data:
         line = line.strip()
         if line.startswith("Ligand ") and "Scores" in line:
@@ -68,13 +77,21 @@ def combine_descriptors(descriptors_file, rdkit_file, output_file):
             if ligand_number in rdkit_dict:
                 combined_data.extend(rdkit_dict[ligand_number])
         else:
-            combined_data.append(f"  {line}" if line and not line.startswith("Ligand ") else line)
+            if line and not line.startswith("Ligand "):
+                combined_data.append(f"  {line}")
+            else:
+                combined_data.append(line)
 
     with open(output_file, 'w') as f:
-        f.write('\n'.join(combined_data))
+        f.write("\n".join(combined_data))
 
-# Main processing function for a given subfolder
 def process_directory(directory):
+    """
+    Process a single complex directory:
+    - find *out_sorted.sdf inside this directory
+    - compute RDKit descriptors
+    - optionally merge with descriptors.txt
+    """
     folder_name = os.path.basename(os.path.normpath(directory))
 
     # Identify a valid out_sorted.sdf file
@@ -106,13 +123,13 @@ def process_directory(directory):
     ligand_counter = 1
     for mol in mols:
         output_lines.append(f"Ligand {ligand_counter} Scores:")
-        descriptors = getMolDescriptors(mol, missingVal="NaN")
+        descriptors = getMolDescriptors(mol, missingVal=None)
         for descriptor, value in descriptors.items():
             output_lines.append(f"  {descriptor}: {value}")
         ligand_counter += 1
 
     with open(rdkit_file, 'w') as f:
-        f.write('\n'.join(output_lines))
+        f.write("\n".join(output_lines))
     print(f"[OK] RDKit descriptors saved to: {rdkit_file}")
 
     if os.path.exists(descriptors_file) and os.path.isfile(rdkit_file):
@@ -121,22 +138,20 @@ def process_directory(directory):
     else:
         print(f"[SKIP] Could not combine descriptors in: {directory}")
 
-# Entry point for walking through a parent directory
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python rdkit_full.py <parent_directory>")
+        print("Usage: python rdkit_full.py <directory>")
         sys.exit(1)
 
-    parent_dir = sys.argv[1]
-    if not os.path.isdir(parent_dir):
-        print(f"Error: {parent_dir} is not a valid directory.")
+    base_dir = sys.argv[1]
+    if not os.path.isdir(base_dir):
+        print(f"Error: {base_dir} is not a valid directory.")
         sys.exit(1)
 
-    for subfolder in os.listdir(parent_dir):
-        subfolder_path = os.path.join(parent_dir, subfolder)
-        if os.path.isdir(subfolder_path):
-            print(f"\n📂 Processing: {subfolder_path}")
-            process_directory(subfolder_path)
+    # Treat the argument as the complex folder root.
+    # If it has subdirectories, you can extend this to walk them as needed,
+    # but for IRIS we typically store all ligands in the root.
+    process_directory(base_dir)
 
 if __name__ == "__main__":
     main()

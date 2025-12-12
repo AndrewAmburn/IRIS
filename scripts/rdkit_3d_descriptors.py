@@ -1,136 +1,143 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
 import os
+import sys
 from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors
-import sys
 
-# Function to calculate 3D descriptors for a ligand using rdMolDescriptors
 def calculate_3d_descriptors(ligand):
     try:
-        descriptors = {
-            'PMI1': rdMolDescriptors.CalcPMI1(ligand),
-            'PMI2': rdMolDescriptors.CalcPMI2(ligand),
-            'PMI3': rdMolDescriptors.CalcPMI3(ligand),
-            'NPR1': rdMolDescriptors.CalcNPR1(ligand),
-            'NPR2': rdMolDescriptors.CalcNPR2(ligand),
-            'RadiusOfGyration': rdMolDescriptors.CalcRadiusOfGyration(ligand),
-            'InertialShapeFactor': rdMolDescriptors.CalcInertialShapeFactor(ligand),
-            'Eccentricity': rdMolDescriptors.CalcEccentricity(ligand),
-            'Asphericity': rdMolDescriptors.CalcAsphericity(ligand),
-            'SpherocityIndex': rdMolDescriptors.CalcSpherocityIndex(ligand),
-            'PBF': rdMolDescriptors.CalcPBF(ligand)
+        return {
+            "PMI1": rdMolDescriptors.CalcPMI1(ligand),
+            "PMI2": rdMolDescriptors.CalcPMI2(ligand),
+            "PMI3": rdMolDescriptors.CalcPMI3(ligand),
+            "NPR1": rdMolDescriptors.CalcNPR1(ligand),
+            "NPR2": rdMolDescriptors.CalcNPR2(ligand),
+            "RadiusOfGyration": rdMolDescriptors.CalcRadiusOfGyration(ligand),
+            "InertialShapeFactor": rdMolDescriptors.CalcInertialShapeFactor(ligand),
+            "Eccentricity": rdMolDescriptors.CalcEccentricity(ligand),
+            "Asphericity": rdMolDescriptors.CalcAsphericity(ligand),
+            "SpherocityIndex": rdMolDescriptors.CalcSpherocityIndex(ligand),
+            "PBF": rdMolDescriptors.CalcPBF(ligand),
         }
-        return descriptors
-    except ValueError as e:
-        print(f"Error calculating 3D descriptors: {e}")
+    except Exception as e:
+        print(f"[WARN] 3D descriptor calc failed: {e}")
         return {}
 
-# Process the folder to calculate 3D descriptors
-def process_directory(directory):
-    output_file_path = os.path.join(directory, 'rdkit_3D_descriptors.txt')
+def find_out_sorted_sdf(directory):
+    for fname in os.listdir(directory):
+        if fname.endswith("out_sorted.sdf"):
+            return os.path.join(directory, fname)
+    return None
 
-    # Check if the file already exists
-    if os.path.exists(output_file_path):
-        print(f"{output_file_path} already exists. Skipping...")
-        return
-
-    sdf_files = [f for f in os.listdir(directory) if f.endswith('out_sorted.sdf')]
-    descriptors = []
-    for sdf_file in sdf_files:
-        sdf_path = os.path.join(directory, sdf_file)
-        suppl = Chem.SDMolSupplier(sdf_path, sanitize=False, removeHs=False)
-        for ligand in suppl:
-            if ligand:
-                try:
-                    ligand = Chem.AddHs(ligand)
-                    descriptor_values = calculate_3d_descriptors(ligand)
-                    descriptors.append(descriptor_values)
-                except Exception as e:
-                    print(f"Error processing ligand: {e}")
-                    continue
-
-    if descriptors:
-        write_descriptors_to_file(descriptors, output_file_path)
-
-# Write the calculated 3D descriptors to a file
 def write_descriptors_to_file(descriptor_data, output_file):
     if not descriptor_data:
         return
+    headers = list(descriptor_data[0].keys())
+    with open(output_file, "w") as f:
+        f.write("\t".join(headers) + "\n")
+        for row in descriptor_data:
+            f.write("\t".join(str(row.get(h, "")) for h in headers) + "\n")
 
-    headers = descriptor_data[0].keys()
-    with open(output_file, 'w') as f:
-        f.write('\t'.join(headers) + '\n')
-        for data in descriptor_data:
-            line = '\t'.join([str(data[h]) for h in headers])
-            f.write(line + '\n')
-
-# Read the 3D descriptors from the file
 def read_3d_descriptors(file_path):
-    with open(file_path, 'r') as f:
-        headers = f.readline().strip().split('\t')
-        descriptors_list = []
+    with open(file_path, "r") as f:
+        headers = f.readline().strip().split("\t")
+        out = []
         for line in f:
-            values = line.strip().split('\t')
-            descriptors_list.append(dict(zip(headers, values)))
-    return descriptors_list
+            vals = line.strip().split("\t")
+            out.append(dict(zip(headers, vals)))
+    return out
 
-# Append the 3D descriptors to the descriptors.txt file
-def append_3d_descriptors_to_file(descriptors_file, descriptors_data):
-    with open(descriptors_file, 'r') as f:
+def append_3d_descriptors_to_descriptors_txt(descriptors_txt, descriptors_data):
+    with open(descriptors_txt, "r") as f:
         lines = f.readlines()
 
-    keywords = ['PMI1:', 'PMI2:', 'PMI3:', 'NPR2:', 'RadiusOfGyration:', 'InertialShapeFactor:', 
-                'Eccentricity:', 'SpherocityIndex:', 'Asphericity:', 'NPR1:', 'PBF:']
-
-    existing_keywords = any(any(keyword in line for keyword in keywords) for line in lines)
-
-    if existing_keywords:
-        print(f"Skipping append: Descriptor lines already exist in {descriptors_file}")
+    # If already appended once, do nothing
+    keywords = [
+        "PMI1:", "PMI2:", "PMI3:", "NPR1:", "NPR2:",
+        "RadiusOfGyration:", "InertialShapeFactor:", "Eccentricity:",
+        "Asphericity:", "SpherocityIndex:", "PBF:"
+    ]
+    if any(any(k in line for k in keywords) for line in lines):
+        print(f"[SKIP] 3D descriptors already appended in: {descriptors_txt}")
         return
 
-    ligand_index = 0
-    with open(descriptors_file, 'w') as f:
+    ligand_idx = 0
+    with open(descriptors_txt, "w") as f:
         for line in lines:
             f.write(line)
             if line.startswith("Ligand") and "Scores:" in line:
-                if ligand_index < len(descriptors_data):
-                    descriptor_values = descriptors_data[ligand_index]
-                    for key, value in descriptor_values.items():
-                        f.write(f"  {key}: {value}\n")
-                    ligand_index += 1
+                if ligand_idx < len(descriptors_data):
+                    d = descriptors_data[ligand_idx]
+                    # preserve consistent indentation with the rest of your pipeline
+                    for key, val in d.items():
+                        f.write(f"  {key}: {val}\n")
+                    ligand_idx += 1
 
-# Process the folder to append the 3D descriptors to descriptors.txt
-def process_3d_append(directory):
-    descriptors_file_path = os.path.join(directory, 'descriptors.txt')
-    rdkit_3d_descriptors_file_path = os.path.join(directory, 'rdkit_3D_descriptors.txt')
+    print(f"[OK] Appended 3D RDKit descriptors into: {descriptors_txt}")
 
-    if os.path.exists(descriptors_file_path) and os.path.exists(rdkit_3d_descriptors_file_path):
-        descriptors_data = read_3d_descriptors(rdkit_3d_descriptors_file_path)
-        append_3d_descriptors_to_file(descriptors_file_path, descriptors_data)
+def process_complex_dir(directory):
+    sdf_path = find_out_sorted_sdf(directory)
+    if not sdf_path:
+        print(f"[SKIP] No *out_sorted.sdf found in: {directory}")
+        return
+
+    out_3d = os.path.join(directory, "rdkit_3D_descriptors.txt")
+    descriptors_txt = os.path.join(directory, "descriptors.txt")
+
+    # Generate rdkit_3D_descriptors.txt
+    if os.path.exists(out_3d):
+        print(f"[SKIP] {out_3d} exists")
     else:
-        print(f"Files missing in directory {directory}: Skipping...")
+        suppl = Chem.SDMolSupplier(sdf_path, sanitize=False, removeHs=False)
+        rows = []
+        for i, lig in enumerate(suppl, start=1):
+            if lig is None:
+                print(f"[WARN] Ligand {i} is None, skipping")
+                rows.append({})
+                continue
+            try:
+                lig_h = Chem.AddHs(lig, addCoords=True)
+            except Exception:
+                lig_h = lig
+            rows.append(calculate_3d_descriptors(lig_h))
+
+        # choose headers from first non-empty dict
+        first_nonempty = next((r for r in rows if r), None)
+        if not first_nonempty:
+            print(f"[ERROR] No valid 3D descriptors computed in: {directory}")
+            return
+
+        # ensure every row has same keys
+        keys = list(first_nonempty.keys())
+        normalized = [{k: r.get(k, "") for k in keys} for r in rows]
+        write_descriptors_to_file(normalized, out_3d)
+        print(f"[OK] Wrote: {out_3d}")
+
+    # Append into descriptors.txt
+    if not os.path.exists(descriptors_txt):
+        print(f"[SKIP] Missing {descriptors_txt}; cannot append 3D descriptors.")
+        return
+
+    if not os.path.exists(out_3d):
+        print(f"[SKIP] Missing {out_3d}; cannot append 3D descriptors.")
+        return
+
+    data = read_3d_descriptors(out_3d)
+    append_3d_descriptors_to_descriptors_txt(descriptors_txt, data)
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python <script_name> <parent_directory>")
+        print("Usage: python rdkit_3d_descriptors.py <complex_directory>")
         sys.exit(1)
 
-    parent_dir = sys.argv[1]
-
-    if not os.path.isdir(parent_dir):
-        print(f"Error: {parent_dir} is not a valid directory.")
+    directory = sys.argv[1]
+    if not os.path.isdir(directory):
+        print(f"Error: {directory} is not a valid directory.")
         sys.exit(1)
 
-    for subfolder in os.listdir(parent_dir):
-        subfolder_path = os.path.join(parent_dir, subfolder)
-        if not os.path.isdir(subfolder_path):
-            continue
-
-        print(f"🔍 Processing: {subfolder_path}")
-        process_directory(subfolder_path)
-        process_3d_append(subfolder_path)
+    process_complex_dir(directory)
 
 if __name__ == "__main__":
     main()
