@@ -69,4 +69,43 @@ Replace `<folder_path>` with the path to the directory containing the docking re
 ## Notes  
 - Ensure that all required dependencies and plugins are correctly installed before running the scripts.  
 - Run all scripts from the `IRIS/scripts` directory.  
-- If any errors occur, verify that the folder structure and input files match the expected format.  
+- If any errors occur, verify that the folder structure and input files match the expected format.
+
+---
+
+## Running the Included Example
+
+IRIS includes an example RNA–ligand docking case (7lng) to verify correct installation.
+
+### Example Directory
+
+IRIS/IRIS_example/7lng
+
+### Run the Example
+
+```
+conda activate iris_env  
+cd IRIS/scripts  
+python get_features.py ../IRIS_example/7lng <pymol_path> <pymol_plugin_path>
+python IRIS.py ../IRIS_example/7lng
+```
+### Output
+
+Successful execution produces all files found in the subfolder "7lng_expected_output" within the IRIS_example folder including:
+
+7lng_IRIS_sorted.sdf
+
+This file contains the docking poses reordered by IRIS
+
+### Notes on the Example
+
+- The example is intended to validate environment setup and IRIS execution.
+- All paths are relative to the IRIS/scripts directory. PyMOL and PyMOL plugin paths will need to be adjusted accordingly.
+
+---
+
+## Notes
+
+- Ensure all required dependencies and PyMOL plugins are installed.
+- Verify that input folder structure matches the expected format.
+- Most errors arise from missing files or incorrect paths.
