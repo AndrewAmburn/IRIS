@@ -9,7 +9,48 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 from rdkit import Chem
 from rdkit.Chem import SDWriter
+from sklearn.base import BaseEstimator, TransformerMixin
 
+class CorrelationFilter(BaseEstimator, TransformerMixin):
+    """
+    Fold-safe feature filtering:
+      1) drop all-NaN columns (training only)
+      2) coerce numeric (non-numeric -> NaN -> 0)
+      3) drop zero-variance columns (training only)
+      4) drop highly correlated columns (Spearman |r| > threshold) (training only)
+    """
+    def __init__(self, threshold=0.8):
+        self.threshold = float(threshold)
+        self.columns_ = None
+
+    def fit(self, X, y=None):
+        Xdf = self._to_df(X).copy()
+        Xdf = Xdf.dropna(axis=1, how="all")
+        Xdf = Xdf.apply(pd.to_numeric, errors="coerce")
+        Xdf = Xdf.replace([np.inf, -np.inf], np.nan).fillna(0.0)
+
+        nunique = Xdf.nunique(dropna=False)
+        Xdf = Xdf.loc[:, nunique > 1]
+
+        if Xdf.shape[1] > 1:
+            corr = Xdf.corr(method="spearman", numeric_only=True).abs()
+            upper = corr.where(np.triu(np.ones(corr.shape), k=1).astype(bool))
+            to_drop = [c for c in upper.columns if (upper[c] > self.threshold).any()]
+            Xdf = Xdf.drop(columns=to_drop, errors="ignore")
+
+        self.columns_ = list(Xdf.columns)
+        return self
+
+    def transform(self, X):
+        Xdf = self._to_df(X).copy()
+        Xdf = Xdf.reindex(columns=self.columns_, fill_value=0.0)
+        Xdf = Xdf.apply(pd.to_numeric, errors="coerce")
+        Xdf = Xdf.replace([np.inf, -np.inf], np.nan).fillna(0.0)
+        return Xdf.values
+
+    @staticmethod
+    def _to_df(X):
+        return X if isinstance(X, pd.DataFrame) else pd.DataFrame(X)
 
 # ---------------------------
 # Model loading

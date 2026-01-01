@@ -71,25 +71,25 @@ python IRIS.py <folder_path>
 
 ## Running the Included Example
 
-IRIS includes an example RNA–ligand docking case (7lng) to verify correct installation.
+IRIS includes an example RNA–ligand docking case (1uts) to verify correct installation.
 
 ### Example Directory
 
-IRIS/IRIS_example/7lng
+IRIS/IRIS_example/1uts
 
 ### Run the Example
 
 ```
 conda activate iris_env  
 cd IRIS/scripts  
-python get_features.py ../IRIS_example/7lng <pymol_path> <pymol_plugin_path>
-python IRIS.py ../IRIS_example/7lng
+python get_features.py ../IRIS_example/1uts <pymol_path> <pymol_plugin_path>
+python IRIS.py ../IRIS_example/1uts
 ```
 ### Output
 
-Successful execution produces all files found in the subfolder "7lng_expected_output" within the IRIS_example folder including:
+Successful execution produces all files found in the subfolder "1uts_expected_output" within the IRIS_example folder including:
 
-7lng_IRIS_sorted.sdf
+1uts_IRIS_sorted.sdf
 
 This file contains the docking poses reordered by IRIS
 

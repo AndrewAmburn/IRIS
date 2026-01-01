@@ -1,0 +1,93 @@
+***********************************************
+The rDock program is licensed under GNU-LGPLv3.0. http://rdock.sourceforge.net/
+Executable:	rbcavity ($Id: //depot/dev/client3/rdock/2013.1/src/exe/rbcavity.cxx#3 $)
+Library:	libRbt.so/2013.1/901 2013/11/27
+RBT_ROOT:	/software/dev_tools/swtree/cs400_centos7.2_pe2016-08/rdock/2013.1/centos7.2_conda/build
+RBT_HOME:	/home/jta30
+Current dir:	/home/jta30/NA_complexes/1uts
+Date:		Sat Dec 14 12:56:04 2024
+***********************************************
+
+Command line arguments:
+-r 1uts.prm
+-was
+
+MAPPER
+CLASS	RbtLigandSiteMapper
+ENABLED	TRUE
+GRIDSTEP	0.5
+MAX_CAVITIES	1
+MIN_VOLUME	100
+NAME	MAPPER
+RADIUS	4.0
+REF_MOL	1uts_lig.sd
+SMALL_SPHERE	1.0
+TRACE	0
+VOL_INCR	0.0
+
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C16 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+N17 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C18 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C19 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C20 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C21 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C22 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C23 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C24 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C25 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C26 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C27 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C28 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C29 makes a bond with an unknown bond order
+RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 297
+C30 makes a bond with an unknown bond order
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C16 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+N17 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C18 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C19 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C20 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C21 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C22 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C23 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C24 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C25 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C26 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C27 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C28 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C29 makes too many bonds
+**WARNING** RBT_MODEL_ERROR at ../src/lib/RbtMdlFileSource.cxx, line 412
+C30 makes too many bonds
+
+DOCKING SITE
+Total volume 1254.75 A^3
+Cavity #1	Size=10038 points; Vol=1254.75 A^3; Min=(-10,-6.5,8.5); Max=(9.5,8.5,24.5); Center=(1.34215,2.03183,17.772); Extent=(19.5,15,16)
+
+Cav = 10038; total = 10038
