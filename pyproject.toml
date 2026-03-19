@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iris-rna-docking"
+version = "0.1.0"
+description = "IRIS: a machine learning-based pose re-ranking tool for RNA-ligand docking"
+readme = "README.md"
+requires-python = "==3.10.*"
+license = { text = "MIT" }
+authors = [
+    { name = "Andrew Amburn" }
+]
+keywords = [
+    "rna",
+    "docking",
+    "machine-learning",
+    "cheminformatics",
+    "bioinformatics"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Chemistry"
+]
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn==1.3.2",
+    "rdkit==2024.3.2",
+    "matplotlib",
+    "seaborn",
+    "joblib",
+    "tqdm",
+    "biopython",
+    "plotly",
+    "numba",
+    "scipy",
+    "h5py",
+    "pycairo",
+    "pygobject",
+    "protobuf",
+    "requests",
+    "werkzeug",
+    "termcolor",
+    "six",
+    "threadpoolctl",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "ruff"
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+[project.scripts]
+iris = "iris.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+
