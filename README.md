@@ -14,7 +14,7 @@ conda activate iris_env
 
 #### Install Additional Packages via Pip  
 ```bash
-pip install spyrmsd==0.8.0 rdkit==2024.3.2 scikit-learn==1.3.2 joblib==1.3.2 pandas catboost==1.2.7
+pip install spyrmsd==0.8.0 rdkit==2024.3.2 scikit-learn==1.3.2 joblib==1.3.2 pandas 
 ```
 
 ### 2. Additional Requirements  
